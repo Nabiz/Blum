@@ -6,7 +6,7 @@ public class Attack : MonoBehaviour
 {
     private BoxCollider2D _attackCollider;
     [SerializeField] private float _attackDuration = 2.0f;
-    private bool isAttacking = false;
+    public bool isAttacking = false;
     // Start is called before the first frame update
     void Start()
     {

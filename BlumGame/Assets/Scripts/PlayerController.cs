@@ -12,12 +12,16 @@ public class PlayerController : MonoBehaviour
     private GroundDetector _groundDetector;
     private Attack _attack;
     private bool _isFacedRight = true;
+    private Animator _animator;
+
+    private int _health = 3;
 
     void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
         _groundDetector = transform.Find("GroundDetector").GetComponent<GroundDetector>();
         _attack = transform.Find("Attack").GetComponent<Attack>();
+        _animator = GetComponent<Animator>();
     }
 
 
@@ -26,25 +30,33 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space) && _groundDetector.IsGrounded() && !_groundDetector.IsRecoiled())
         {
             _groundDetector.SetGrounded(false);
+            _animator.SetBool("IsJumping", true);
             _rigidbody.AddForce(_jump_force * Vector2.up, ForceMode2D.Impulse);
         }
-        if(Input.GetKeyDown(KeyCode.X))
+        if(Input.GetKeyDown(KeyCode.X) && _groundDetector.IsGrounded())
         {
             _attack.PerformAttack();
+            _animator.SetTrigger("Attack");
         }
     }
 
     private void FixedUpdate()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
-        if(!_groundDetector.IsRecoiled())
-            _rigidbody.position += horizontalInput * Time.fixedDeltaTime * _movement_speed * Vector2.right;
-        if(_isFacedRight && horizontalInput < -0.1f)
+        if (!_groundDetector.IsRecoiled() && !_attack.isAttacking)
+        {
+            float velocity = horizontalInput * Time.fixedDeltaTime * _movement_speed;
+            _rigidbody.position +=  velocity * Vector2.right;
+            _animator.SetFloat("Speed", Mathf.Abs(velocity));
+        }
+
+        if (_isFacedRight && horizontalInput < -0.1f && !_attack.isAttacking)
         {
             _isFacedRight = false;
             gameObject.transform.Rotate(0f, 180f, 0f);
+            
         }
-        else if(!_isFacedRight && horizontalInput > 0.1f)
+        else if(!_isFacedRight && horizontalInput > 0.1f && !_attack.isAttacking)
         {
             _isFacedRight = true;
             gameObject.transform.Rotate(0f, 180f, 0f);
@@ -55,12 +67,28 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            GameObject enemy = collision.gameObject;
+            --_health;
             _groundDetector.SetRecoiled(true);
             _guiManager.LoseHealth();
-            Debug.Log(Mathf.Sign(transform.position.x - enemy.transform.position.x));
-            _rigidbody.AddForce(new Vector2(Mathf.Sign(transform.position.x - enemy.transform.position.x) * 4f, 3f), ForceMode2D.Impulse);
+            if (_health == 0)
+            {
+                StartCoroutine(Die());
+            }
+            else
+            {
+                GameObject enemy = collision.gameObject;
+                _rigidbody.velocity = Vector2.zero;
+                _rigidbody.AddForce(new Vector2(Mathf.Sign(transform.position.x - enemy.transform.position.x) * 4f, 3f), ForceMode2D.Impulse);
+            }
 
         }
+    }
+
+    IEnumerator Die()
+    {
+        _animator.SetTrigger("IsDead");
+        _rigidbody.Sleep();
+        yield return new WaitForSeconds(1f);
+        Destroy(gameObject);
     }
 }

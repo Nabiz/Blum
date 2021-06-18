@@ -33,6 +33,7 @@ public class GroundDetector : MonoBehaviour
             _isGrounded = true;
             _isRecoiled = false;
             GetComponentInParent<Rigidbody2D>().velocity = Vector2.zero;
+            GetComponentInParent<Animator>().SetBool("IsJumping", false);
         }
     }
 }
