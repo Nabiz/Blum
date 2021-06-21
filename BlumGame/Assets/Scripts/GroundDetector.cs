@@ -6,6 +6,12 @@ public class GroundDetector : MonoBehaviour
 {
     private bool _isGrounded = true;
     private bool _isRecoiled = true;
+    PlayerController playerController;
+
+    private void Start()
+    {
+        playerController = GetComponentInParent<PlayerController>();
+    }
 
     public bool IsGrounded()
     {
@@ -30,6 +36,8 @@ public class GroundDetector : MonoBehaviour
     {
         if (collision.CompareTag("Ground"))
         {
+            playerController._isHitted = false;
+            playerController._animator.SetBool("IsHitted", false);
             _isGrounded = true;
             _isRecoiled = false;
             GetComponentInParent<Rigidbody2D>().velocity = Vector2.zero;

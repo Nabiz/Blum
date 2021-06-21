@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour
     private GroundDetector _groundDetector;
     private Attack _attack;
     private bool _isFacedRight = true;
-    private Animator _animator;
+    public bool _isHitted;
+    public Animator _animator;
 
     private int _health = 3;
 
@@ -76,6 +77,8 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
+                _isHitted = true;
+                _animator.SetBool("IsHitted", true);
                 GameObject enemy = collision.gameObject;
                 _rigidbody.velocity = Vector2.zero;
                 _rigidbody.AddForce(new Vector2(Mathf.Sign(transform.position.x - enemy.transform.position.x) * 4f, 3f), ForceMode2D.Impulse);
