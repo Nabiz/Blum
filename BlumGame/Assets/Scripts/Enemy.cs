@@ -4,45 +4,45 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    // Start is called before the first frame update
-    [SerializeField] private List<float> _patrolPoints;
-    private int _currentPatrolPointIndex = 0;
-    [SerializeField] private float _movementSpeed;
-    private Rigidbody2D _rigidbody;
-    private int _health = 2;
+    [SerializeField] private List<float> patrolPoints;
+    private int currentPatrolPointIndex = 0;
+    [SerializeField] private float movementSpeed;
+    private Rigidbody2D rb;
+    private int health = 2;
     void Start()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
-        if (_patrolPoints.Count != 0)
+        rb = GetComponent<Rigidbody2D>();
+        if (patrolPoints.Count != 0)
         {
-            StartCoroutine(MoveToPatrolPoint(_patrolPoints[_currentPatrolPointIndex]));
+            StartCoroutine(MoveToPatrolPoint(patrolPoints[currentPatrolPointIndex]));
         }
 
     }
 
     IEnumerator MoveToPatrolPoint(float patrolPoint)
     {
-            float startPosX = _rigidbody.position.x;
+            float startPosX = rb.position.x;
             float endPosX = patrolPoint;
             float wholeDistance = Mathf.Abs(startPosX - endPosX);
             float starTime = Time.time;
 
-            float coveredDistance = (Time.time - starTime) * _movementSpeed;
+            float coveredDistance = (Time.time - starTime) * movementSpeed;
             float distanceFraction = coveredDistance / wholeDistance;
 
             while(distanceFraction < 1)
             {
-                coveredDistance = (Time.time - starTime) * _movementSpeed;
+                coveredDistance = (Time.time - starTime) * movementSpeed;
                 distanceFraction = coveredDistance / wholeDistance;
-                _rigidbody.position = new Vector2(startPosX + distanceFraction * (endPosX - startPosX), _rigidbody.position.y);
+                rb.position = new Vector2(startPosX + distanceFraction * (endPosX - startPosX), rb.position.y);
                 yield return null;
             }
-        if (_patrolPoints.Count > 1)
+
+        if (patrolPoints.Count > 1)
         {
-            _currentPatrolPointIndex++;
-            if (_currentPatrolPointIndex == _patrolPoints.Count)
-                _currentPatrolPointIndex = 0;
-            StartCoroutine(MoveToPatrolPoint(_patrolPoints[_currentPatrolPointIndex]));
+            currentPatrolPointIndex++;
+            if(currentPatrolPointIndex == patrolPoints.Count)
+                currentPatrolPointIndex = 0;
+            StartCoroutine(MoveToPatrolPoint(patrolPoints[currentPatrolPointIndex]));
         }
     }
 
@@ -50,8 +50,8 @@ public class Enemy : MonoBehaviour
     {
         if (collision.CompareTag("PlayerAttack"))
         {
-            _health--;
-            if (_health <= 0)
+            health--;
+            if (health <= 0)
                 Destroy(gameObject);
         }
     }

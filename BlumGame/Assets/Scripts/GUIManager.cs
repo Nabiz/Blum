@@ -7,28 +7,23 @@ using TMPro;
 public class GUIManager : MonoBehaviour
 {
 
-    private int _coinScore = 0;
-    [SerializeField] TextMeshProUGUI _coinText;
-    private int _health = 3;
-    [SerializeField] private Image[] _hearths;
+    private int coinScore = 0;
+    [SerializeField] TextMeshProUGUI coinText;
+    private int health = 3;
+    [SerializeField] private Image[] hearths;
 
     public void AddCoinScore()
     {
-        _coinScore++;
-        UpdateGUI();
+        coinScore++;
+        coinText.text = "Coins: " + coinScore;
     }
 
     public void LoseHealth()
     {
-        if(_health > 0)
+        if(health > 0)
         {
-            _health--;
-            _hearths[_health].gameObject.SetActive(false);
+            health--;
+            hearths[health].gameObject.SetActive(false);
         }
-    }
-
-    private void UpdateGUI()
-    {
-        _coinText.text = "Coins: " + _coinScore;
     }
 }

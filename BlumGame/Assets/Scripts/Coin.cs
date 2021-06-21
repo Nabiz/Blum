@@ -4,23 +4,13 @@ using UnityEngine;
 
 public class Coin : MonoBehaviour
 {
-    // Start is called before the first frame update
-    [SerializeField] private GUIManager _guiManager;
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    [SerializeField] private GUIManager guiManager;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            _guiManager.AddCoinScore();
+            guiManager.AddCoinScore();
             Destroy(gameObject);
         }
     }
