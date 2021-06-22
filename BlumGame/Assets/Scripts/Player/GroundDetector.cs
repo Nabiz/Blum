@@ -17,4 +17,13 @@ public class GroundDetector : MonoBehaviour
             playerController.ResetStatuses();
         }
     }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ground"))
+        {
+            playerController.isGrounded = false;
+            playerController.animator.SetBool("IsGrounded", false);
+        }
+    }
 }

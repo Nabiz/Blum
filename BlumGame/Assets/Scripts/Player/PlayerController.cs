@@ -13,11 +13,11 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Attack attack;
 
-    private bool isGrounded = true;
+    public bool isGrounded = true;
     private bool isFacedRight = true;
     private bool isHitted = false;
 
-    private Animator animator;
+    public Animator animator;
 
     private int health = 3;
 
@@ -28,6 +28,7 @@ public class PlayerController : MonoBehaviour
         isHitted = false;
         isGrounded = true;
 
+        animator.SetBool("IsGrounded", true);
         animator.SetBool("IsHitted", false);
         animator.SetBool("IsJumping", false);
     }
@@ -93,25 +94,35 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            if (!isHitted)
-            {
-                --health;
-                isHitted = true;
-                guiManager.LoseHealth();
-            }
+            TakeHit(collision.gameObject);
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("EnemyAttack"))
+        {
+            TakeHit(collision.gameObject);
+        }
+    }
 
-            if (health == 0)
-            {
-                StartCoroutine(Die());
-            }
-            else
-            {
-                animator.SetBool("IsHitted", true);
-                GameObject enemy = collision.gameObject;
-                rb.velocity = Vector2.zero;
-                rb.AddForce(new Vector2(Mathf.Sign(transform.position.x - enemy.transform.position.x) * 4f, 2f), ForceMode2D.Impulse);
-            }
+    private void TakeHit(GameObject colisionGameObject)
+    {
+        if (!isHitted)
+        {
+            --health;
+            isHitted = true;
+            guiManager.LoseHealth();
+        }
 
+        if (health == 0)
+        {
+            StartCoroutine(Die());
+        }
+        else
+        {
+            animator.SetBool("IsHitted", true);
+            rb.velocity = Vector2.zero;
+            rb.AddForce(new Vector2(Mathf.Sign(transform.position.x - colisionGameObject.transform.position.x) * 5f, 2f), ForceMode2D.Impulse);
         }
     }
 
