@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private List<float> patrolPoints;
     private int currentPatrolPointIndex = 0;
-    [SerializeField] private float movementSpeed;
+    [SerializeField] private float movementSpeed = 1.5f;
     private Rigidbody2D rb;
     private int health = 2;
     void Start()
